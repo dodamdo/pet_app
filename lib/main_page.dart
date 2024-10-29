@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'pet_search.dart'; // PetSearchPage 추가
 import 'calendar_page.dart'; // CalendarPage 추가
-import 'sales_calculation_page.dart'; // SalesCalculationPage 추가
+import 'sales_calculation_page.dart';
+import 'kakao_login.dart';
 
 class MainPage extends StatelessWidget {
   @override
@@ -60,6 +61,18 @@ class MainPage extends StatelessWidget {
                     );
                   },
                   child: Text('매출계산'),
+                ),SizedBox(height: 20),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFFFAE7ED),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => KakaoLogin()),
+                    );
+                  },
+                  child: Text('카톡로그인'),
                 ),
               ],
             );

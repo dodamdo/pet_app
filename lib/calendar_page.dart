@@ -106,6 +106,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
   Future<void> _searchSchedules(DateTime selectedDay) async {
     final response = await http.get(
+      //Uri.parse('http://152.67.208.206:8080/api/reservation?schDate=${selectedDay.toIso8601String().split('T')[0]}'),
       Uri.parse('http://10.0.2.2:8080/api/reservation?schDate=${selectedDay.toIso8601String().split('T')[0]}'),
       headers: {
         'Authorization': 'Bearer $_token',
@@ -130,6 +131,7 @@ class _CalendarPageState extends State<CalendarPage> {
   // 색상 업데이트 API 호출
   Future<void> _updateScheduleColor(int schId, String color) async {
     final response = await http.post(
+      //Uri.parse('http://152.67.208.206:8080/api/changecolor?schId=$schId&schColor=$color'),
       Uri.parse('http://10.0.2.2:8080/api/changecolor?schId=$schId&schColor=$color'),
       headers: {
         'Authorization': 'Bearer $_token',
