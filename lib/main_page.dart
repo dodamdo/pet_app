@@ -4,6 +4,8 @@ import 'pet_search.dart'; // PetSearchPage 추가
 import 'calendar_page.dart'; // CalendarPage 추가
 import 'sales_calculation_page.dart';
 import 'kakao_login.dart';
+import 'reser_main.dart'; // ReserMain 추가
+import 'pet_add.dart';
 
 class MainPage extends StatelessWidget {
   @override
@@ -24,6 +26,34 @@ class MainPage extends StatelessWidget {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                SizedBox(height: 20),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFFFAE7ED),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => PetAddPage()),
+                    );
+                  },
+                  child: Text('반려동물 등록'),
+                ),
+                // 예약 잡기 버튼 추가
+                SizedBox(height: 20),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFFFAE7ED), 
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ReserMain()), 
+                    );
+                  },
+                  child: Text('예약 잡기'),
+                ),
+                SizedBox(height: 20),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFFFAE7ED), // 버튼 배경색
@@ -61,7 +91,8 @@ class MainPage extends StatelessWidget {
                     );
                   },
                   child: Text('매출계산'),
-                ),SizedBox(height: 20),
+                ),
+                SizedBox(height: 20),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFFFAE7ED),
