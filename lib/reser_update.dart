@@ -32,10 +32,19 @@ class _ReservationUpdatePageState extends State<ReservationUpdatePage> {
     _ownerIdController = TextEditingController(text: widget.reservationData['ownerId']?.toString() ?? '');
     _petNameController = TextEditingController(text: widget.reservationData['petName'] ?? '');
     _reserDateController = TextEditingController(text: widget.reservationData['reserDate'] ?? '');
-    _reserTimeController = TextEditingController(text: widget.reservationData['reserTime'] ?? '');
     _groomingStyleController = TextEditingController(text: widget.reservationData['reserGroomingStyle'] ?? '');
     _selectedColor = widget.reservationData['reserColor'] ?? 'black';
-    _selectedTime = widget.reservationData['reserTime'] ?? '';
+
+    // 시간 값이 `_timeOptions`에 없으면 '직접 추가'로 설정하고, 텍스트 필드에 해당 시간 표시
+    String reserTime = widget.reservationData['reserTime'] ?? '';
+    if (_timeOptions.contains(reserTime)) {
+      _selectedTime = reserTime;
+      _reserTimeController = TextEditingController();
+    } else {
+      _selectedTime = '직접 추가';
+      _reserTimeController = TextEditingController(text: reserTime);
+    }
+
     _loadToken();
   }
 
@@ -148,6 +157,9 @@ class _ReservationUpdatePageState extends State<ReservationUpdatePage> {
                   onChanged: (String? newValue) {
                     setState(() {
                       _selectedTime = newValue;
+                      if (_selectedTime != '직접 추가') {
+                        _reserTimeController.clear(); // 직접 추가 텍스트 필드 초기화
+                      }
                     });
                   },
                   items: _timeOptions.map<DropdownMenuItem<String>>((String time) {
@@ -157,11 +169,11 @@ class _ReservationUpdatePageState extends State<ReservationUpdatePage> {
                     );
                   }).toList(),
                 ),
-                if (_selectedTime == '직접 추가')
-                  TextField(
-                    controller: _reserTimeController,
-                    decoration: InputDecoration(labelText: '예약 시간 직접 입력'),
-                  ),
+                TextField(
+                  controller: _reserTimeController,
+                  decoration: InputDecoration(labelText: '예약 시간 직접 입력'),
+                  enabled: _selectedTime == '직접 추가',
+                ),
               ],
             ),
             TextField(
