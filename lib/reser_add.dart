@@ -20,6 +20,8 @@ class _ReservationAddPageState extends State<ReservationAddPage> {
   final TextEditingController _reserDateController = TextEditingController();
   final TextEditingController _reserTimeController = TextEditingController();
   final TextEditingController _groomingStyleController = TextEditingController();
+  final TextEditingController _petBreedController = TextEditingController();
+
 
   String _token = "";
   String _selectedColor = 'black';
@@ -55,7 +57,8 @@ class _ReservationAddPageState extends State<ReservationAddPage> {
     }
 
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:8080/api/checkpet?search=$search'),
+      //Uri.parse('http://10.0.2.2:8080/api/checkpet?search=$search'),
+      Uri.parse('http://152.67.208.206:8080/api/checkpet?search=$search'),
       headers: {
         'Authorization': 'Bearer $_token',
         'Content-Type': 'application/json; charset=UTF-8',
@@ -78,6 +81,7 @@ class _ReservationAddPageState extends State<ReservationAddPage> {
       'petId': _petIdController.text,
       'ownerId': _ownerIdController.text,
       'petName': _petNameController.text,
+      'petBreed': _petBreedController.text,
       'reserDate': _reserDateController.text,
       'reserTime': _selectedTime == '직접 추가' ? _reserTimeController.text : _selectedTime,
       'reserColor': _selectedColor,
@@ -85,7 +89,8 @@ class _ReservationAddPageState extends State<ReservationAddPage> {
     };
 
     final response = await http.post(
-      Uri.parse('http://10.0.2.2:8080/api/reseradd'),
+      Uri.parse('http://152.67.208.206:8080/api/reseradd'),
+      //Uri.parse('http://10.0.2.2:8080/api/reseradd'),
       headers: {
         'Authorization': 'Bearer $_token',
         'Content-Type': 'application/json; charset=UTF-8',
@@ -140,6 +145,7 @@ class _ReservationAddPageState extends State<ReservationAddPage> {
                         _petIdController.text = pet['petId']?.toString() ?? '';
                         _ownerIdController.text = pet['ownerId']?.toString() ?? '';
                         _petNameController.text = pet['petName']?.toString() ?? '';
+                        _petBreedController.text = pet['petBreed']?.toString() ?? '';
                         _petSearchController.clear(); // 검색 필드 초기화
                         setState(() {
                           _petSuggestions.clear();
@@ -161,6 +167,11 @@ class _ReservationAddPageState extends State<ReservationAddPage> {
             TextField(
               controller: _petNameController,
               decoration: InputDecoration(labelText: '반려동물 이름'),
+            ),
+            TextField(
+              controller: _petBreedController,
+              decoration: InputDecoration(labelText: '품종'),
+              enabled: false,
             ),
             TextField(
               controller: _reserDateController,

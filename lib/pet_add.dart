@@ -37,7 +37,8 @@ class _PetAddPageState extends State<PetAddPage> {
     };
 
     final response = await http.post(
-      Uri.parse('http://10.0.2.2:8080/api/petAdd'),
+      //Uri.parse('http://10.0.2.2:8080/api/petAdd'),
+      Uri.parse('http://152.67.208.206/:8080/api/petAdd'),
       headers: {
         'Authorization': 'Bearer $_token',
         'Content-Type': 'application/json; charset=UTF-8',

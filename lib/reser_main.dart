@@ -13,7 +13,7 @@ class ReserMain extends StatefulWidget {
 
 class _ReservationCalendarPageState extends State<ReserMain> {
   String _token = "";
-  CalendarFormat _calendarFormat = CalendarFormat.month;
+  CalendarFormat _calendarFormat = CalendarFormat.month;  // 월 형식으로 고정
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
   Map<DateTime, List<Map<String, dynamic>>> _dailyReservationsMap = {};
@@ -22,7 +22,6 @@ class _ReservationCalendarPageState extends State<ReserMain> {
   void initState() {
     super.initState();
     _loadToken();
-
   }
 
   Future<void> _loadToken() async {
@@ -36,7 +35,6 @@ class _ReservationCalendarPageState extends State<ReserMain> {
       _fetchMonthlyReservations(DateTime.now());
       _selectedDay = DateTime.now(); // 현재 날짜로 선택된 날짜를 초기화합니다.
     } else {
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('토큰을 불러오는 데 실패했습니다.')),
       );
@@ -45,7 +43,8 @@ class _ReservationCalendarPageState extends State<ReserMain> {
 
   Future<void> _fetchMonthlyReservations(DateTime date) async {
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:8080/api/reservations/monthly?year=${date.year}&month=${date.month}'),
+      //Uri.parse('http://10.0.2.2:8080/api/reservations/monthly?year=${date.year}&month=${date.month}'),
+      Uri.parse('http://152.67.208.206:8080/api/reservations/monthly?year=${date.year}&month=${date.month}'),
       headers: {
         'Authorization': 'Bearer $_token',
         'Content-Type': 'application/json; charset=UTF-8',
@@ -70,7 +69,8 @@ class _ReservationCalendarPageState extends State<ReserMain> {
     String formattedDate = DateFormat('yyyy-MM-dd').format(date);
 
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:8080/api/reservations/daily?date=$formattedDate'),
+      //Uri.parse('http://10.0.2.2:8080/api/reservations/daily?date=$formattedDate'),
+      Uri.parse('http://152.67.208.206:8080/api/reservations/daily?date=$formattedDate'),
       headers: {
         'Authorization': 'Bearer $_token',
         'Content-Type': 'application/json; charset=UTF-8',
@@ -94,7 +94,6 @@ class _ReservationCalendarPageState extends State<ReserMain> {
           ),
         ),
       ).then((_) {
-
         _fetchMonthlyReservations(date);
       });
     } else {
@@ -119,126 +118,123 @@ class _ReservationCalendarPageState extends State<ReserMain> {
         title: Text('예약 달력'),
         backgroundColor: Color(0xFFFAE7ED),
       ),
-      body: Column(
-        children: [
-          TableCalendar(
-            focusedDay: _focusedDay,
-            firstDay: DateTime.utc(2020, 1, 1),
-            lastDay: DateTime.utc(2030, 12, 31),
-            calendarFormat: _calendarFormat,
-            onFormatChanged: (format) {
-              setState(() {
-                _calendarFormat = format;
-              });
-            },
-            onPageChanged: (focusedDay) {
-              setState(() {
-                _focusedDay = focusedDay;
-              });
-              _fetchMonthlyReservations(focusedDay);
-            },
-            onDaySelected: _onDaySelected,
-            calendarBuilders: CalendarBuilders(
-              defaultBuilder: (context, day, focusedDay) {
-                List<Map<String, dynamic>> reservations = _dailyReservationsMap[DateTime(day.year, day.month, day.day)] ?? [];
-                int displayedCount = reservations.length > 6 ? 6 : reservations.length;
-                int overflowCount = reservations.length > 6 ? reservations.length - 6 : 0;
-
-                return Container(
-                  alignment: Alignment.topLeft,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(day.day.toString(), style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                      Container(
-                        height: 1,
-                        color: Colors.black, // 밑줄 색상
-                      ),
-                      // 예약 목록을 추가
-                      if (displayedCount > 0)
-                        ...reservations.take(displayedCount).map((res) {
-                          final String reserColor = res['reserColor'] ?? 'black';
-                          return Container(
-                            color: _getColorFromString(reserColor).withOpacity(0.2),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Container(
-                                  color: _getColorFromString(reserColor),
-                                  width: 3,
-                                  height: 10,
-                                ),
-                                SizedBox(width: 5),
-                                Text(
-                                  res['reserTime'],
-                                  style: TextStyle(fontSize: 10),
-                                ),
-                              ],
-                            ),
-                          );
-                        }),
-                      if (overflowCount > 0)
-                        Text('+${overflowCount}', style: TextStyle(fontSize: 9)),
-                    ],
-                  ),
-                );
+      body: SingleChildScrollView(  // 추가된 부분: 스크롤 가능하도록 감싸기
+        child: Column(
+          children: [
+            TableCalendar(
+              focusedDay: _focusedDay,
+              firstDay: DateTime.utc(2020, 1, 1),
+              lastDay: DateTime.utc(2030, 12, 31),
+              calendarFormat: _calendarFormat,  // 월 형식 고정
+              onPageChanged: (focusedDay) {
+                setState(() {
+                  _focusedDay = focusedDay;
+                });
+                _fetchMonthlyReservations(focusedDay);
               },
-              selectedBuilder: (context, day, focusedDay) {
-                return Container(
-                  alignment: Alignment.center,
-                  child: Text(day.day.toString()),
-                );
-              },
-              todayBuilder: (context, day, focusedDay) {
-                List<Map<String, dynamic>> reservations = _dailyReservationsMap[DateTime(day.year, day.month, day.day)] ?? [];
-                int displayedCount = reservations.length > 6 ? 6 : reservations.length;
-                int overflowCount = reservations.length > 6 ? reservations.length - 6 : 0;
+              onDaySelected: _onDaySelected,
+              calendarBuilders: CalendarBuilders(
+                defaultBuilder: (context, day, focusedDay) {
+                  List<Map<String, dynamic>> reservations = _dailyReservationsMap[DateTime(day.year, day.month, day.day)] ?? [];
+                  int displayedCount = reservations.length > 6 ? 6 : reservations.length;
+                  int overflowCount = reservations.length > 6 ? reservations.length - 6 : 0;
 
-                return Container(
-                  alignment: Alignment.topLeft, // 상단 정렬
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(day.day.toString(), style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                      Container(
-                        height: 1,
-                        color: Colors.black, // 밑줄 색상
-                      ),
-                      // 예약 목록을 추가
-                      if (displayedCount > 0)
-                        ...reservations.take(displayedCount).map((res) {
-                          final String reserColor = res['reserColor'] ?? 'black';
-                          return Container(
-                            color: _getColorFromString(reserColor).withOpacity(0.2),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Container(
-                                  color: _getColorFromString(reserColor),
-                                  width: 3,
-                                  height: 10,
-                                ),
-                                SizedBox(width: 5),
-                                Text(
-                                  res['reserTime'],
-                                  style: TextStyle(fontSize: 10),
-                                ),
-                              ],
-                            ),
-                          );
-                        }),
+                  return Container(
+                    alignment: Alignment.topLeft,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(day.day.toString(), style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                        Container(
+                          height: 1,
+                          color: Colors.black, // 밑줄 색상
+                        ),
+                        // 예약 목록을 추가
+                        if (displayedCount > 0)
+                          ...reservations.take(displayedCount).map((res) {
+                            final String reserColor = res['reserColor'] ?? 'black';
+                            return Container(
+                              color: _getColorFromString(reserColor).withOpacity(0.2),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    color: _getColorFromString(reserColor),
+                                    width: 3,
+                                    height: 10,
+                                  ),
+                                  SizedBox(width: 5),
+                                  Text(
+                                    res['reserTime'],
+                                    style: TextStyle(fontSize: 10),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }),
+                        if (overflowCount > 0)
+                          Text('+${overflowCount}', style: TextStyle(fontSize: 9)),
+                      ],
+                    ),
+                  );
+                },
+                selectedBuilder: (context, day, focusedDay) {
+                  return Container(
+                    alignment: Alignment.center,
+                    child: Text(day.day.toString()),
+                  );
+                },
+                todayBuilder: (context, day, focusedDay) {
+                  List<Map<String, dynamic>> reservations = _dailyReservationsMap[DateTime(day.year, day.month, day.day)] ?? [];
+                  int displayedCount = reservations.length > 6 ? 6 : reservations.length;
+                  int overflowCount = reservations.length > 6 ? reservations.length - 6 : 0;
 
-                      if (overflowCount > 0)
-                        Text('+${overflowCount}', style: TextStyle(fontSize: 9)),
-                    ],
-                  ),
-                );
-              },
+                  return Container(
+                    alignment: Alignment.topLeft, // 상단 정렬
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(day.day.toString(), style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                        Container(
+                          height: 1,
+                          color: Colors.black, // 밑줄 색상
+                        ),
+                        // 예약 목록을 추가
+                        if (displayedCount > 0)
+                          ...reservations.take(displayedCount).map((res) {
+                            final String reserColor = res['reserColor'] ?? 'black';
+                            return Container(
+                              color: _getColorFromString(reserColor).withOpacity(0.2),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    color: _getColorFromString(reserColor),
+                                    width: 3,
+                                    height: 10,
+                                  ),
+                                  SizedBox(width: 5),
+                                  Text(
+                                    res['reserTime'],
+                                    style: TextStyle(fontSize: 10),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }),
+
+                        if (overflowCount > 0)
+                          Text('+${overflowCount}', style: TextStyle(fontSize: 9)),
+                      ],
+                    ),
+                  );
+                },
+              ),
+              rowHeight: 130.0,
             ),
-            rowHeight: 130.0,
-          ),
-          SizedBox(height: 20),
-        ],
+            SizedBox(height: 20),
+          ],
+        ),
       ),
     );
   }

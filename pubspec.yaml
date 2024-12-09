@@ -39,11 +39,11 @@ dependencies:
   kakao_flutter_sdk_share: ^1.9.5 # 카카오톡 공유 API 패키지
   kakao_flutter_sdk_talk: ^1.9.5 # 카카오톡 채널, 카카오톡 소셜, 카카오톡 메시지 API 패키지
   kakao_flutter_sdk_friend: ^1.9.5 # 피커 API 패키지
-
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
+  home_widget: ^0.3.0
+  image_picker: ^0.8.6
   cupertino_icons: ^1.0.8
+
+
 
 dev_dependencies:
   flutter_test:

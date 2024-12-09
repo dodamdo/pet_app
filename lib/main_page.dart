@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'pet_search.dart'; // PetSearchPage 추가
-import 'calendar_page.dart'; // CalendarPage 추가
+import 'pet_search.dart';
+import 'calendar_page.dart';
 import 'sales_calculation_page.dart';
 import 'kakao_login.dart';
-import 'reser_main.dart'; // ReserMain 추가
+import 'reser_main.dart';
 import 'pet_add.dart';
 
 class MainPage extends StatelessWidget {
@@ -43,12 +43,12 @@ class MainPage extends StatelessWidget {
                 SizedBox(height: 20),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFFFAE7ED), 
+                    backgroundColor: Color(0xFFFAE7ED),
                   ),
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => ReserMain()), 
+                      MaterialPageRoute(builder: (context) => ReserMain()),
                     );
                   },
                   child: Text('예약 잡기'),

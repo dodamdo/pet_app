@@ -17,6 +17,7 @@ class _ReservationUpdatePageState extends State<ReservationUpdatePage> {
   late TextEditingController _petIdController;
   late TextEditingController _ownerIdController;
   late TextEditingController _petNameController;
+  late TextEditingController _petBreedController;
   late TextEditingController _reserDateController;
   late TextEditingController _reserTimeController;
   late TextEditingController _groomingStyleController;
@@ -31,6 +32,7 @@ class _ReservationUpdatePageState extends State<ReservationUpdatePage> {
     _petIdController = TextEditingController(text: widget.reservationData['petId']?.toString() ?? '');
     _ownerIdController = TextEditingController(text: widget.reservationData['ownerId']?.toString() ?? '');
     _petNameController = TextEditingController(text: widget.reservationData['petName'] ?? '');
+    _petBreedController = TextEditingController(text: widget.reservationData['petBreed'] ?? '');
     _reserDateController = TextEditingController(text: widget.reservationData['reserDate'] ?? '');
     _groomingStyleController = TextEditingController(text: widget.reservationData['reserGroomingStyle'] ?? '');
     _selectedColor = widget.reservationData['reserColor'] ?? 'black';
@@ -63,6 +65,7 @@ class _ReservationUpdatePageState extends State<ReservationUpdatePage> {
       'petId': _petIdController.text,
       'ownerId': _ownerIdController.text,
       'petName': _petNameController.text,
+      'petBreed': _petBreedController.text,
       'reserDate': _reserDateController.text,
       'reserTime': _selectedTime == '직접 추가' ? _reserTimeController.text : _selectedTime,
       'reserColor': _selectedColor,
@@ -70,7 +73,8 @@ class _ReservationUpdatePageState extends State<ReservationUpdatePage> {
     };
 
     final response = await http.post(
-      Uri.parse('http://10.0.2.2:8080/api/reservation/update'),
+      //Uri.parse('http://10.0.2.2:8080/api/reservation/update'),
+      Uri.parse('http://152.67.208.206:8080/api/reservation/update'),
       headers: {
         'Authorization': 'Bearer $_token',
         'Content-Type': 'application/json; charset=UTF-8',
@@ -90,7 +94,8 @@ class _ReservationUpdatePageState extends State<ReservationUpdatePage> {
     if (_token.isEmpty) return;
 
     final response = await http.post(
-      Uri.parse('http://10.0.2.2:8080/api/reservation/delete?reserId=${widget.reserId}'),
+      //Uri.parse('http://10.0.2.2:8080/api/reservation/delete?reserId=${widget.reserId}'),
+      Uri.parse('http://152.67.208.206:8080/api/reservation/delete?reserId=${widget.reserId}'),
       headers: {
         'Authorization': 'Bearer $_token',
         'Content-Type': 'application/json; charset=UTF-8',
@@ -122,12 +127,16 @@ class _ReservationUpdatePageState extends State<ReservationUpdatePage> {
             ),
             TextField(
               controller: _ownerIdController,
-              decoration: InputDecoration(labelText: '소유자 ID'),
+              decoration: InputDecoration(labelText: '연락처'),
               readOnly: true,
             ),
             TextField(
               controller: _petNameController,
               decoration: InputDecoration(labelText: '반려동물 이름'),
+            ),
+            TextField(
+              controller: _petBreedController,
+              decoration: InputDecoration(labelText: '품종'),
             ),
             TextField(
               controller: _reserDateController,

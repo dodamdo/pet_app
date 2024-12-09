@@ -4,6 +4,8 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
+import 'package:untitled/photo_update.dart';
+
 class CalendarPage extends StatefulWidget {
   @override
   _CalendarPageState createState() => _CalendarPageState();
@@ -106,8 +108,8 @@ class _CalendarPageState extends State<CalendarPage> {
 
   Future<void> _searchSchedules(DateTime selectedDay) async {
     final response = await http.get(
-      //Uri.parse('http://152.67.208.206:8080/api/reservation?schDate=${selectedDay.toIso8601String().split('T')[0]}'),
-      Uri.parse('http://10.0.2.2:8080/api/reservation?schDate=${selectedDay.toIso8601String().split('T')[0]}'),
+      Uri.parse('http://152.67.208.206:8080/api/reservation?schDate=${selectedDay.toIso8601String().split('T')[0]}'),
+      //Uri.parse('http://10.0.2.2:8080/api/reservation?schDate=${selectedDay.toIso8601String().split('T')[0]}'),
       headers: {
         'Authorization': 'Bearer $_token',
         'Content-Type': 'application/json; charset=UTF-8',
@@ -131,8 +133,8 @@ class _CalendarPageState extends State<CalendarPage> {
   // 색상 업데이트 API 호출
   Future<void> _updateScheduleColor(int schId, String color) async {
     final response = await http.post(
-      //Uri.parse('http://152.67.208.206:8080/api/changecolor?schId=$schId&schColor=$color'),
-      Uri.parse('http://10.0.2.2:8080/api/changecolor?schId=$schId&schColor=$color'),
+      Uri.parse('http://152.67.208.206:8080/api/changecolor?schId=$schId&schColor=$color'),
+      //Uri.parse('http://10.0.2.2:8080/api/changecolor?schId=$schId&schColor=$color'),
       headers: {
         'Authorization': 'Bearer $_token',
         'Content-Type': 'application/json; charset=UTF-8',
@@ -152,6 +154,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
   // 상세 정보 모달
   void _showScheduleDetail(BuildContext context, SchEntity schedule) {
+    final TextEditingController notesController = TextEditingController(text: schedule.schNotes);
     final String? photoUrl = schedule.photoUrl.isNotEmpty
         ? 'https://objectstorage.ap-chuncheon-1.oraclecloud.com/n/ax6zqcd108vv/b/dodam/o/${schedule.photoUrl}'
         : null;
@@ -165,10 +168,6 @@ class _CalendarPageState extends State<CalendarPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('${schedule.groomingStyle}'),
-                const SizedBox(height: 8.0),
-                Text('${schedule.schNotes}'),
-                const SizedBox(height: 8.0),
                 photoUrl != null
                     ? Image.network(
                   photoUrl,
@@ -176,10 +175,51 @@ class _CalendarPageState extends State<CalendarPage> {
                   fit: BoxFit.cover,
                 )
                     : Text('사진 없음'),
+
+                const SizedBox(height: 8.0),
+                Text('${schedule.groomingStyle}'),
+                const SizedBox(height: 8.0),
+                TextField(
+                  controller: notesController,
+                  maxLines: 5,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: '메모를 입력하세요',
+                  ),
+                ),
               ],
             ),
           ),
           actions: [
+            if (photoUrl == null)
+              TextButton(
+                child: Text('사진 등록'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PhotoUpdatePage(
+                        schId: schedule.schId,
+                        petId: schedule.petId,
+                        token: _token,
+                      ),
+                    ),
+                  ).then((result) {
+                    if (result == true) {
+                      _searchSchedules(_selectedDay);
+                    }
+                  });
+                },
+              ),
+            TextButton(
+              child: Text('메모 수정'),
+              onPressed: () async {
+                bool success = await _updateScheduleNotes(schedule.schId, notesController.text);
+                Navigator.of(context).pop();
+                if (success) _searchSchedules(_selectedDay);
+              },
+            ),
             TextButton(
               child: Text('색상 변경'),
               onPressed: () {
@@ -196,6 +236,32 @@ class _CalendarPageState extends State<CalendarPage> {
       },
     );
   }
+
+
+
+  Future<bool> _updateScheduleNotes(int schId, String schNotes) async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://152.67.208.206:8080/api/schmemoupdate'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $_token',
+        },
+        body: jsonEncode({
+          'schId': schId,
+          'schNotes': schNotes,
+        }),
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      print('메모 수정 오류: $e');
+      return false;
+    }
+  }
+
+
+
 
   @override
   Widget build(BuildContext context) {

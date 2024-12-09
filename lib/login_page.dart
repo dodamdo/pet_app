@@ -15,8 +15,8 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> login(BuildContext context) async {
     final response = await http.post(
-      Uri.parse('http://10.0.2.2:8080/flutterLogin'),
-      //Uri.parse('http://152.67.208.206:8080/flutterLogin'),
+      //Uri.parse('http://10.0.2.2:8080/flutterLogin'),
+      Uri.parse('http://152.67.208.206:8080/flutterLogin'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

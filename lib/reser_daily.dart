@@ -50,15 +50,15 @@ class _ReserDailyPageState extends State<ReserDailyPage> {
                   ),
                   child: ListTile(
                     title: Text(
-                      '시간 : ${reservation['reserTime']}',
+                      '${reservation['petName']}  / ${reservation['petBreed']} ',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('id: ${reservation['reserId']}'),
-                        Text('반려동물: ${reservation['petName']}'),
-                        Text('미용 스타일: ${reservation['reserGroomingStyle'] ?? '정보 없음'}'),
+                        Text('시간 : ${reservation['reserTime']}'),
+                        Text('미용 스타일 : ${reservation['reserGroomingStyle'] ?? '정보 없음'}'),
+                        Text('메모 : ${reservation['reserNotes'] ?? ' 없음'}'),
                       ],
                     ),
                     onTap: () async {
@@ -89,7 +89,7 @@ class _ReserDailyPageState extends State<ReserDailyPage> {
                   builder: (context) => ReservationAddPage(selectedDate: widget.selectedDate),
                 ),
               ).then((_) {
-                // 예약 추가 후 데일리 페이지를 다시 불러옵니다.
+
                 Navigator.pop(context, true);
               });
             },
@@ -108,7 +108,6 @@ class _ReserDailyPageState extends State<ReserDailyPage> {
     });
   }
 
-  // 색상 문자열을 색상 코드로 변환하는 함수
   Color _getColorFromString(String colorString) {
     switch (colorString.toLowerCase()) {
       case 'gray':

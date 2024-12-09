@@ -32,8 +32,8 @@ class _PetSearchPageState extends State<PetSearchPage> {
 
   Future<void> searchPets() async {
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:8080/api/flutterPetSearch?search=${_searchController.text}'),
-      //Uri.parse('http://152.67.208.206:8080/api/flutterPetSearch?search=${_searchController.text}'),
+      //Uri.parse('http://10.0.2.2:8080/api/flutterPetSearch?search=${_searchController.text}'),
+      Uri.parse('http://152.67.208.206:8080/api/flutterPetSearch?search=${_searchController.text}'),
       headers: {
         'Authorization': 'Bearer $_token',
         'Content-Type': 'application/json; charset=UTF-8',

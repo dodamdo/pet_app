@@ -30,8 +30,8 @@ class _SalesCalculationPageState extends State<SalesCalculationPage> {
 
     final response = await http.get(
       Uri.parse(
-          'http://10.0.2.2:8080/api/calculate?startDate=$_startDate&endDate=$_endDate'),
-          //'http://152.67.208.206:8080/api/calculate?startDate=$_startDate&endDate=$_endDate'),
+          //'http://10.0.2.2:8080/api/calculate?startDate=$_startDate&endDate=$_endDate'),
+          'http://152.67.208.206:8080/api/calculate?startDate=$_startDate&endDate=$_endDate'),
       headers: {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json; charset=UTF-8',
