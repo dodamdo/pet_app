@@ -19,37 +19,55 @@ class _PetSearchPageState extends State<PetSearchPage> {
   @override
   void initState() {
     super.initState();
-    _loadToken();
+    _loadTokenAndSearch(); // 토큰 로드 후 검색 실행
   }
 
-  Future<void> _loadToken() async {
+  Future<void> _loadTokenAndSearch() async {
+    // SharedPreferences에서 토큰 로드
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? "";
     setState(() {
       _token = token;
     });
+
+    // 전달된 검색어로 초기 검색 실행
+    final searchQuery = ModalRoute.of(context)?.settings.arguments as String?;
+    if (searchQuery != null) {
+      setState(() {
+        _searchController.text = searchQuery; // 검색어를 텍스트 필드에 설정
+      });
+      searchPets(); // 토큰 로드 후 검색 실행
+    }
   }
 
-  Future<void> searchPets() async {
-    final response = await http.get(
-      //Uri.parse('http://10.0.2.2:8080/api/flutterPetSearch?search=${_searchController.text}'),
-      Uri.parse('http://152.67.208.206:8080/api/flutterPetSearch?search=${_searchController.text}'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-    );
 
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      setState(() {
-        _pets = data['pets'];
-        _owners = data['owners'];
-      });
-    } else {
-      print('검색 실패: ${response.body}');
+  Future<void> searchPets() async {
+    try {
+      final response = await http.get(
+        Uri.parse(
+            'http://152.67.208.206:8080/api/flutterPetSearch?search=${_searchController.text}'),
+        headers: {
+          'Authorization': 'Bearer $_token',
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        setState(() {
+          _pets = data['pets'] ?? [];
+          _owners = data['owners'] ?? [];
+        });
+      } else {
+        print('검색 실패: ${response.body}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('검색 실패: ${response.body}')),
+        );
+      }
+    } catch (e) {
+      print('검색 중 오류 발생: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('검색 실패: ${response.body}')),
+        SnackBar(content: Text('네트워크 오류: $e')),
       );
     }
   }
@@ -67,9 +85,14 @@ class _PetSearchPageState extends State<PetSearchPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 10),
+            // 검색어 입력란
             TextField(
               controller: _searchController,
-              decoration: InputDecoration(labelText: '검색어 입력'),
+              decoration: InputDecoration(
+                labelText: '검색어 입력',
+                border: OutlineInputBorder(),
+              ),
+              onSubmitted: (_) => searchPets(), // 검색어 입력 후 엔터로 검색
             ),
             SizedBox(height: 20),
             ElevatedButton(
@@ -102,7 +125,8 @@ class _PetSearchPageState extends State<PetSearchPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => PetDetailPage(petId: pet['petId']),
+                            builder: (context) =>
+                                PetDetailPage(petId: pet['petId']),
                           ),
                         );
                       },
@@ -128,11 +152,11 @@ class _PetSearchPageState extends State<PetSearchPage> {
                       title: Text('${owner['petName']}'),
                       subtitle: Text('연락처: ${owner['formattedOwnerId']}'),
                       onTap: () {
-                        // 추가 연락처 클릭 시 상세 페이지로 이동
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => PetDetailPage(petId: owner['petId']),
+                            builder: (context) =>
+                                PetDetailPage(petId: owner['petId']),
                           ),
                         );
                       },
