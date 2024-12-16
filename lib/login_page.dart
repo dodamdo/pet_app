@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'main_page.dart'; // 메인 페이지를 나중에 구현하세요
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'main_page.dart'; // 메인 페이지
 
 class LoginPage extends StatefulWidget {
   @override
@@ -10,19 +11,26 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final TextEditingController _usernameController = TextEditingController(text: 'user');
-  final TextEditingController _passwordController = TextEditingController(text: '23355253');
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // .env 파일에서 값 불러와서 설정
+    _usernameController.text = dotenv.env['USERNAME'] ?? '';
+    _passwordController.text = dotenv.env['PASSWORD'] ?? '';
+  }
 
   Future<void> login(BuildContext context) async {
     final response = await http.post(
-      //Uri.parse('http://10.0.2.2:8080/flutterLogin'),
-      Uri.parse('http://152.67.208.206:8080/flutterLogin'),
+      Uri.parse('http://152.67.208.206:8080/flutterLogin'), // URI는 그대로 사용
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, String>{
-        'username': _usernameController.text,
-        'password': _passwordController.text,
+        'username': _usernameController.text, // 환경변수에서 가져온 값 사용
+        'password': _passwordController.text, // 환경변수에서 가져온 값 사용
       }),
     );
 
@@ -64,7 +72,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () => login(context),
+              onPressed: () => login(context), // 버튼 클릭 시 로그인 실행
               child: Text('로그인'),
             ),
           ],

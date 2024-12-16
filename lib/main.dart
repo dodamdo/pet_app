@@ -1,15 +1,38 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'login_page.dart';
 import 'package:kakao_flutter_sdk_common/kakao_flutter_sdk_common.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+
+  print("현재 작업 디렉토리: ${Directory.current.path}");
+
+  try {
+    await dotenv.load(fileName: "assets/.env");
+
+
+    if (dotenv.env.containsKey('KAKAO_NATIVE_APP_KEY')) {
+      print("환경 변수 로드 성공!");
+      print("KAKAO_NATIVE_APP_KEY: ${dotenv.env['KAKAO_NATIVE_APP_KEY']}");
+    } else {
+      throw Exception('환경 변수 KAKAO_NATIVE_APP_KEY 가 없습니다.');
+    }
+  } catch (e) {
+    print("환경 변수 로드 실패: $e");
+    return;
+  }
+
 
   // Kakao SDK 초기화
   KakaoSdk.init(
-    nativeAppKey: '81ddd7f8f8dde10459c0652548ce793d',
-    javaScriptAppKey: 'f14fd59e578bd71c812f08cde6b876ee',
+    nativeAppKey: dotenv.env['KAKAO_NATIVE_APP_KEY'] ?? 'YOUR_NATIVE_APP_KEY',
+    javaScriptAppKey: dotenv.env['KAKAO_JAVASCRIPT_APP_KEY'] ?? 'YOUR_JS_APP_KEY',
   );
+
   runApp(MyApp());
 }
 

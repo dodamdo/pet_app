@@ -5,6 +5,7 @@ import 'calendar_page.dart';
 import 'sales_calculation_page.dart';
 import 'reser_main.dart';
 import 'pet_add.dart';
+import 'kakao_login.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -162,6 +163,17 @@ class MainContent extends StatelessWidget {
                 text: '예약 잡기',
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => ReserMain()));
+                },
+              ),
+              CustomButton(
+                text: '카카오톡 로그인',
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => KakaoLogin()));
+                },
+              ),CustomButton(
+                text: '카카오톡 보내기',
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => KakaoLogin()));
                 },
               ),
             ],
