@@ -67,7 +67,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <!-- "kakao${YOUR_NATIVE_APP_KEY}://oauth" 형식의 앱 실행 스킴 설정 -->
+
                 <data
                     android:scheme="kakao81ddd7f8f8dde10459c0652548ce793d"
                     android:host="oauth"/>

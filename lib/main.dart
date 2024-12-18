@@ -9,12 +9,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
 
-  print("현재 작업 디렉토리: ${Directory.current.path}");
-
   try {
     await dotenv.load(fileName: "assets/.env");
-
-
     if (dotenv.env.containsKey('KAKAO_NATIVE_APP_KEY')) {
       print("환경 변수 로드 성공!");
       print("KAKAO_NATIVE_APP_KEY: ${dotenv.env['KAKAO_NATIVE_APP_KEY']}");

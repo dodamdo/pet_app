@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
-import 'kakao_main.dart'; // KakaoMain import
+import 'kakao_main.dart';
 
 class KakaoLogin extends StatefulWidget {
   @override
@@ -26,10 +26,9 @@ class _KakaoLoginState extends State<KakaoLogin> {
           MaterialPageRoute(builder: (context) => KakaoMain()),
         );
       } catch (error) {
-        print('카카오톡으로 로그인 실패: ${error.toString()}'); // 에러 정보 출력
+        print('카카오톡으로 로그인 실패: ${error.toString()}');
 
         if (error is PlatformException && error.code == 'CANCELED') {
-          // 로그인 취소 시 처리
           return;
         }
 
@@ -46,18 +45,15 @@ class _KakaoLoginState extends State<KakaoLogin> {
           print('카카오계정으로 로그인 실패: ${error.toString()}'); // 에러 정보 출력
         }
       }
-    } else {
-      // KakaoTalk이 설치되지 않은 경우 Kakao 계정으로 로그인
-      try {
+    } else {      try {
         await UserApi.instance.loginWithKakaoAccount();
         print('카카오계정으로 로그인 성공');
-        // 로그인 성공 시 KakaoMain 페이지로 이동
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => KakaoMain()),
         );
       } catch (error) {
-        print('카카오계정으로 로그인 실패: ${error.toString()}'); // 에러 정보 출력
+        print('카카오계정으로 로그인 실패: ${error.toString()}');
       }
     }
   }
